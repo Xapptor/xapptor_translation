@@ -7,6 +7,8 @@ import 'package:xapptor_translation/translate.dart';
 import 'headers_api_request.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
+// LanguagePicker widget.
+
 class LanguagePicker extends StatefulWidget {
   const LanguagePicker({
     required this.translation_stream_list,
@@ -31,7 +33,9 @@ class _LanguagePickerState extends State<LanguagePicker> {
   String target_language = "en";
   late SharedPreferences prefs;
 
-  get_languages() async {
+  // Get available languages.
+
+  get_available_languages() async {
     prefs = await SharedPreferences.getInstance();
 
     if (prefs.getString("target_language") != null) {
@@ -77,7 +81,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
   @override
   void initState() {
     super.initState();
-    get_languages();
+    get_available_languages();
   }
 
   @override

@@ -1,6 +1,8 @@
 import 'package:universal_platform/universal_platform.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+// Return headers for API request.
+
 Future<Map<String, String>> headers_api_request() async {
   Map<String, String> headers = {
     "Content-type": "application/json",

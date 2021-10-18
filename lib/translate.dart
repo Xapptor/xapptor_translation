@@ -3,6 +3,8 @@ import 'dart:core';
 import 'google_translation_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// TranslationStream model.
+
 class TranslationStream {
   List<StreamController<String>> stream_controllers = [];
   List<Stream> streams = [];
