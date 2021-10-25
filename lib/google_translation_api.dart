@@ -5,6 +5,8 @@ import 'package:xapptor_auth/get_api_key.dart';
 import 'headers_api_request.dart';
 
 class GoogleTranslationApi {
+  // Call to Google Translation API.
+
   Future<String> translate(String original_text) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getString("target_language") == null)
