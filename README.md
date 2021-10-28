@@ -1,11 +1,10 @@
-# XapptorTranslation
+# **Xapptor Translation**
+### Translation Module for Web and Mobile Navigation.
 
-## Let's get started
+## **Let's get started**
 
-### 1 - Depend on it
-
+### **1 - Depend on it**
 ##### Add it to your package's pubspec.yaml file
-
 ```yml
 dependencies:
     xapptor_translation: 
@@ -14,55 +13,92 @@ dependencies:
         ref: main
 ```
 
-### 2 - Install it
-
+### **2 - Install it**
 ##### Install packages from the command line
 ```sh
 flutter packages get
 ```
 
-### 3 - Learn it like a charm
-
+### **3 - Learn it like a charm**
+### * Set translation_stream and translation_stream_list variables
+### * Set text_list with your texts
+### * Set your update_text_list function
+### * Init translation_stream and translation_stream_list variables
+### * Set your TopBar inside your Scaffold (you can include a LanguagePicker)
+### * Call the texts translated, for example, text_list[0]
 ```dart
-UserInfoView(
-    text_list: login_values_english,
-    tc_and_pp_text: RichText(text: TextSpan()),
-    gender_values: [],
-    country_values: [],
-    text_color: color_abeinstitute_text,
-    first_button_color: color_abeinstitute_main_button,
-    second_button_color: color_abeinstitute_text,
-    third_button_color: color_abeinstitute_text,
-    logo_image_path: logo_image_path_abeinstitute,
-    has_language_picker: has_language_picker_abeinstitute,
-    topbar_color: color_abeinstitute_topbar,
-    custom_background: null,
-    user_info_form_type: UserInfoFormType.login,
-    outline_border: true,
-    first_button_action: null,
-    second_button_action: open_forgot_password,
-    third_button_action: open_register,
-    has_back_button: true,
-    text_field_background_color: null,
-);
+class ExampleWidget extends StatefulWidget {
+  @override
+  _ExampleWidgetState createState() => _ExampleWidgetState();
+}
+
+class _ExampleWidgetState extends State<ExampleWidget> {
+    late TranslationStream translation_stream;
+    List<TranslationStream> translation_stream_list = [];
+
+    List<String> text_list = [
+        "Example text for traduction 1",
+        "Example text for traduction 2",
+        "Example text for traduction 3",
+    ];
+
+    update_text_list({
+        required int index,
+        required String new_text,
+        required int list_index,
+    }) {
+        text_list[index] = new_text;
+        setState(() {});
+    }
+
+    @override
+    void initState() {
+        translation_stream = TranslationStream(
+            text_list: text_list,
+            update_text_list_function: update_text_list,
+            list_index: 0,
+            active_translation: true,
+        );
+        translation_stream_list = [translation_stream];
+
+        super.initState();
+    }
+
+    @override
+    Widget build(BuildContext context) {
+        return Scaffold(
+            appBar: TopBar(
+                background_color: Colors.blue,
+                has_back_button: true,
+                actions: <Widget>[
+                    Container(
+                    margin: EdgeInsets.only(right: 20),
+                    width: 150,
+                    child: LanguagePicker(
+                            translation_stream_list: translation_stream_list,
+                            language_picker_items_text_color: Colors.cyan,
+                        ),
+                    ),
+                ],
+                custom_leading: null,
+                logo_path: "assets/images/logo.png",
+            ),
+            body: Center(
+                child: Text(
+                    text_list[0],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 40,
+                    ),
+                ),
+            ),
+        );
+    }
+}
 ```
 
-### 4 - Live Examples
+### **4 - Check Abeinstitute Repo for more examples**
+[Abeinstitute Repo](https://github.com/Xapptor/abeinstitute)
 
-#### Login
-
-[Abeinstitute Login](https://www.abeinstitute.com/#/login)
-
-[Lum Login](https://app.franquiciaslum.com/#/login)
-
-#### Register
-
-[Abeinstitute Register](https://www.abeinstitute.com/#/register)
-
-[Lum Register](https://app.franquiciaslum.com/#/register)
-
-#### Restore Password
-
-[Abeinstitute Restore Password](https://www.abeinstitute.com/#/forgot_password)
-
-[Lum Restore Password](https://app.franquiciaslum.com/#/forgot_password)
+[Abeinstitute](https://www.abeinstitute.com)
