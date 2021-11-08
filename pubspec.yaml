@@ -1,6 +1,6 @@
 name: xapptor_translation
-description: A new Flutter package project.
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
+description: Translation module to use Google translation services and save values ​​in local storage.
+repository: https://github.com/Xapptor/xapptor_translation
 version: 0.0.1
 
 environment:
@@ -15,8 +15,9 @@ dependencies:
   universal_platform: ^1.0.0+1
   http: ^0.13.3
   package_info_plus: ^1.0.6
-  xapptor_auth:
-    path: ../xapptor_auth
+  pointer_interceptor: ^0.9.0+1
+  
+  xapptor_auth: ^0.0.1
 
 dev_dependencies:
   flutter_test:
