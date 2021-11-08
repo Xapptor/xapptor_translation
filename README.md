@@ -1,4 +1,5 @@
 # **Xapptor Translation**
+[![pub package](https://img.shields.io/pub/v/xapptor_translation?color=blue)](https://pub.dartlang.org/packages/xapptor_translation)
 ### Translation module to use Google translation services and save values ​​in local storage.
 
 ## **Let's get started**
@@ -7,7 +8,7 @@
 ##### Add it to your package's pubspec.yaml file
 ```yml
 dependencies:
-    xapptor_translation: ^0.0.1
+    xapptor_translation: ^0.0.2
 ```
 
 ### **2 - Install it**
