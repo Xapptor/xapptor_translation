@@ -1,5 +1,5 @@
 # **Xapptor Translation**
-### Translation Module for Web and Mobile Navigation.
+### Translation module to use Google translation services and save values ​​in local storage.
 
 ## **Let's get started**
 
@@ -7,16 +7,13 @@
 ##### Add it to your package's pubspec.yaml file
 ```yml
 dependencies:
-    xapptor_translation: 
-        git: 
-        url: git://github.com/Xapptor/xapptor_translation.git 
-        ref: main
+    xapptor_translation: ^0.0.1
 ```
 
 ### **2 - Install it**
 ##### Install packages from the command line
 ```sh
-flutter packages get
+flutter pub get
 ```
 
 ### **3 - Learn it like a charm**
