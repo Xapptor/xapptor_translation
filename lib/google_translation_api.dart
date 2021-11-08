@@ -25,8 +25,11 @@ class GoogleTranslationApi {
             "translated_text_$original_text\_target_$target_language")!;
       } else {
         try {
+          String api_key =
+              await get_api_key(name: "translation", organization: "gcp");
+
           String url =
-              'https://translation.googleapis.com/language/translate/v2?source=en&target=$target_language&key=${await get_api_key(name: "translation")}&q=$original_text&format=text';
+              'https://translation.googleapis.com/language/translate/v2?source=en&target=$target_language&key=$api_key&q=$original_text&format=text';
 
           Response response = await get(
             Uri.parse(url),

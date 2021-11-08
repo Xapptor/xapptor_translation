@@ -55,8 +55,11 @@ class _LanguagePickerState extends State<LanguagePicker> {
       languages_names = prefs.getStringList("languages_names")!;
       languages_codes = prefs.getStringList("languages_codes")!;
     } else {
+      String api_key =
+          await get_api_key(name: "translation", organization: "gcp");
+
       String url =
-          "https://translation.googleapis.com/language/translate/v2/languages?key=${await get_api_key(name: "translation")}&target=en";
+          "https://translation.googleapis.com/language/translate/v2/languages?key=$api_key&target=en";
 
       Response response = await get(
         Uri.parse(url),
