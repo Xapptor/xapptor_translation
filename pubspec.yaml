@@ -1,7 +1,7 @@
 name: xapptor_translation
 description: Translation module to use Google translation services and save values ​​in local storage.
 repository: https://github.com/Xapptor/xapptor_translation
-version: 0.0.2
+version: 0.0.3
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -11,13 +11,17 @@ dependencies:
   flutter:
     sdk: flutter
   shared_preferences: ^2.0.8
-  cloud_firestore: ^2.5.4
+  cloud_firestore: ^3.1.6
   universal_platform: ^1.0.0+1
   http: ^0.13.3
   package_info_plus: ^1.0.6
   pointer_interceptor: ^0.9.0+1
-  
-  xapptor_auth: ^0.0.2
+
+  xapptor_auth: ^0.0.3
+
+dependency_overrides:
+  xapptor_auth:
+    path: ../xapptor_auth
 
 dev_dependencies:
   flutter_test:
