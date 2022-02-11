@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:core';
+import 'package:xapptor_logic/clean_share_preferences.dart';
 import 'google_translation_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,39 +53,15 @@ class TranslationStream {
   }
 
   translate() async {
-    prefs = await SharedPreferences.getInstance();
-
-    // prefs.setString(
-    //   "last_date_translations_updated",
-    //   DateTime.now().subtract(Duration(days: 31)).toString(),
-    // );
-
-    if (prefs.getString("last_date_translations_updated") == null) {
-      prefs.setString(
-        "last_date_translations_updated",
-        DateTime.now().toString(),
-      );
-    } else {
-      DateTime last_date_translations_updated =
-          DateTime.parse(prefs.getString("last_date_translations_updated")!);
-
-      int date_difference_in_days =
-          DateTime.now().difference(last_date_translations_updated).inDays;
-
-      //print("date_difference_in_days $date_difference_in_days");
-
-      if (date_difference_in_days > 30) {
-        final prefs_keys = prefs.getKeys();
-        for (String prefs_key in prefs_keys) {
-          if (prefs_key.contains("translated_text_")) {
-            prefs.remove(prefs_key);
-          }
-        }
-        prefs.remove("last_date_translations_updated");
-        prefs.remove("languages_names");
-        prefs.remove("languages_codes");
-      }
-    }
+    check_share_preferences_cache(
+      key_to_check: "last_date_translations_updated",
+      similar_keys_to_delete: "translated_text_",
+      specific_keys_to_delete: [
+        "languages_names",
+        "languages_codes",
+      ],
+      cache_life_period_in_seconds: Duration.secondsPerDay * 30,
+    );
 
     for (int i = 0; i < original_texts.length; i++) {
       stream_controllers[i].add(
