@@ -50,7 +50,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
     if (prefs.getStringList("languages_names") != null &&
         prefs.getStringList("languages_codes") != null) {
-      print("return languages from local storage");
+      print("Returning languages from local storage");
 
       languages_names = prefs.getStringList("languages_names")!;
       languages_codes = prefs.getStringList("languages_codes")!;
@@ -73,7 +73,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
         languages_codes.add(language['language']);
       });
 
-      print("return languages from api");
+      print("Returning languages from api");
       prefs.setStringList("languages_names", languages_names);
       prefs.setStringList("languages_codes", languages_codes);
     }

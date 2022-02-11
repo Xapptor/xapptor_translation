@@ -13,48 +13,83 @@ class GoogleTranslationApi {
       prefs.setString("target_language", "en");
     String target_language = prefs.getString("target_language") ?? "en";
 
+    TranslationValueType current_translation_value_type =
+        TranslationValueType.Original;
+    String current_text = "";
+
     if (target_language == "en") {
-      print("return translation from original text");
-      return original_text;
+      current_text = original_text;
     } else {
       if (prefs.getString(
               "translated_text_$original_text\_target_$target_language") !=
           null) {
-        print("return translation from local storage");
-        return prefs.getString(
+        current_translation_value_type = TranslationValueType.Local;
+
+        current_text = prefs.getString(
             "translated_text_$original_text\_target_$target_language")!;
       } else {
         try {
-          String api_key =
-              await get_api_key(name: "translation", organization: "gcp");
-
-          String url =
-              'https://translation.googleapis.com/language/translate/v2?source=en&target=$target_language&key=$api_key&q=$original_text&format=text';
-
-          Response response = await get(
-            Uri.parse(url),
-            headers: await headers_api_request(),
+          Map<String, dynamic> response = await fetch_translation_from_endpoint(
+            original_text,
+            target_language,
           );
-          Map<String, dynamic> body = jsonDecode(response.body);
-          //print("response ${response.body}");
 
-          if (body["error"] == null) {
-            var result = body['data']['translations'][0]['translatedText'];
+          if (response["error"] == null) {
+            var result = response['data']['translations'][0]['translatedText'];
 
             prefs.setString(
                 "translated_text_$original_text\_target_$target_language",
                 result);
-            print("return translation from api");
+
+            print(
+                "Returning translation from ${TranslationValueType.Api.toShortString()}");
             return result;
           } else {
-            print("return translation from original text");
-            return original_text;
+            current_translation_value_type = TranslationValueType.Original;
+            current_text = original_text;
           }
         } catch (error) {
           print(error);
-          return original_text;
+          current_text = original_text;
         }
       }
     }
+
+    print(
+        "Returning translation from ${current_translation_value_type.toShortString()}");
+    return current_text;
+  }
+
+  Future<Map<String, dynamic>> fetch_translation_from_endpoint(
+    String original_text,
+    String target_language,
+  ) async {
+    String api_key = await get_api_key(
+      name: "translation",
+      organization: "gcp",
+    );
+
+    String url =
+        'https://translation.googleapis.com/language/translate/v2?source=en&target=$target_language&key=$api_key&q=$original_text&format=text';
+
+    Response response = await get(
+      Uri.parse(url),
+      headers: await headers_api_request(),
+    );
+    Map<String, dynamic> reponse_body = jsonDecode(response.body);
+    //print("response ${reponse_body}");
+    return reponse_body;
+  }
+}
+
+enum TranslationValueType {
+  Api,
+  Original,
+  Local,
+}
+
+extension ParseToString on TranslationValueType {
+  String toShortString() {
+    return this.toString().toLowerCase().split('.').last;
   }
 }
