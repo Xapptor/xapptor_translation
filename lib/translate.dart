@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:core';
-import 'package:xapptor_logic/clean_share_preferences.dart';
+import 'package:xapptor_logic/check_share_preferences_cache.dart';
 import 'google_translation_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
