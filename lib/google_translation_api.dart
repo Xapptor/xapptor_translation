@@ -41,8 +41,7 @@ class GoogleTranslationApi {
                 "translated_text_$original_text\_target_$target_language",
                 result);
 
-            print(
-                "Returning translation from ${TranslationValueType.Api.toShortString()}");
+            //print("Returning translation from ${TranslationValueType.Api.toShortString()}");
             return result;
           } else {
             current_translation_value_type = TranslationValueType.Original;
@@ -55,8 +54,7 @@ class GoogleTranslationApi {
       }
     }
 
-    print(
-        "Returning translation from ${current_translation_value_type.toShortString()}");
+    //print("Returning translation from ${current_translation_value_type.toShortString()}");
     return current_text;
   }
 
