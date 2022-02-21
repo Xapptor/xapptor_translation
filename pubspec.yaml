@@ -21,7 +21,6 @@ dependencies:
   xapptor_logic: ^0.0.3
 
 dependency_overrides:
-  platform: ^3.1.0
   xapptor_auth:
     path: ../xapptor_auth
   xapptor_logic:

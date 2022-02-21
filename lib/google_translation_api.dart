@@ -14,7 +14,7 @@ class GoogleTranslationApi {
     String target_language = prefs.getString("target_language") ?? "en";
 
     TranslationValueType current_translation_value_type =
-        TranslationValueType.Original;
+        TranslationValueType.original;
     String current_text = "";
 
     if (target_language == "en") {
@@ -23,7 +23,7 @@ class GoogleTranslationApi {
       if (prefs.getString(
               "translated_text_$original_text\_target_$target_language") !=
           null) {
-        current_translation_value_type = TranslationValueType.Local;
+        current_translation_value_type = TranslationValueType.local;
 
         current_text = prefs.getString(
             "translated_text_$original_text\_target_$target_language")!;
@@ -44,7 +44,7 @@ class GoogleTranslationApi {
             //print("Returning translation from ${TranslationValueType.Api.toShortString()}");
             return result;
           } else {
-            current_translation_value_type = TranslationValueType.Original;
+            current_translation_value_type = TranslationValueType.original;
             current_text = original_text;
           }
         } catch (error) {
@@ -81,9 +81,9 @@ class GoogleTranslationApi {
 }
 
 enum TranslationValueType {
-  Api,
-  Original,
-  Local,
+  api,
+  original,
+  local,
 }
 
 extension ParseToString on TranslationValueType {
