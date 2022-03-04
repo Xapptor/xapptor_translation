@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xapptor_auth/authentication_needed_alert.dart';
 import 'package:xapptor_auth/get_api_key.dart';
 import 'package:xapptor_translation/translate.dart';
 import 'headers_api_request.dart';
@@ -103,17 +105,21 @@ class _LanguagePickerState extends State<LanguagePicker> {
           color: Colors.white,
         ),
         onChanged: (new_value) {
-          language_value = new_value!;
+          if (FirebaseAuth.instance.currentUser != null) {
+            language_value = new_value!;
 
-          target_language =
-              languages_codes[languages_names.indexOf(language_value)];
+            target_language =
+                languages_codes[languages_names.indexOf(language_value)];
 
-          prefs.setString('target_language', target_language);
-          setState(() {});
+            prefs.setString('target_language', target_language);
+            setState(() {});
 
-          widget.translation_stream_list.forEach((translation_stream) {
-            translation_stream.translate();
-          });
+            widget.translation_stream_list.forEach((translation_stream) {
+              translation_stream.translate();
+            });
+          } else {
+            authentication_needed_alert(context: context);
+          }
         },
         selectedItemBuilder: (BuildContext context) {
           return languages_names.map<DropdownMenuItem<String>>((String value) {
