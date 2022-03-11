@@ -22,6 +22,7 @@ class TranslationStream {
         update_text_list_function,
     required int list_index,
     required bool active_translation,
+    int cache_lifetime_in_seconds = Duration.secondsPerDay * 30,
   }) {
     for (int i = 0; i < text_list.length; i++) {
       original_texts.add(text_list[i]);
@@ -47,12 +48,14 @@ class TranslationStream {
     }
     if (active_translation) {
       Timer(Duration(milliseconds: 300), () {
-        translate();
+        translate(cache_lifetime_in_seconds: cache_lifetime_in_seconds);
       });
     }
   }
 
-  translate() async {
+  translate({
+    int cache_lifetime_in_seconds = Duration.secondsPerDay * 30,
+  }) async {
     check_share_preferences_cache(
       key_to_check: "last_date_translations_updated",
       similar_keys_to_delete: "translated_text_",
@@ -60,13 +63,14 @@ class TranslationStream {
         "languages_names",
         "languages_codes",
       ],
-      cache_life_period_in_seconds: Duration.secondsPerDay * 30,
+      cache_lifetime_in_seconds: cache_lifetime_in_seconds,
     );
 
     for (int i = 0; i < original_texts.length; i++) {
-      stream_controllers[i].add(
-        await GoogleTranslationApi().translate(original_texts[i]),
-      );
+      String translated_text =
+          await GoogleTranslationApi().translate(original_texts[i]);
+
+      stream_controllers[i].add(translated_text);
     }
   }
 }

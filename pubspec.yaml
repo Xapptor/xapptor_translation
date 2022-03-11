@@ -10,8 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  firebase_auth: ^3.3.7
+  cloud_firestore: ^3.1.10
+
   shared_preferences: ^2.0.13
-  cloud_firestore: ^3.1.8
   universal_platform: ^1.0.0+1
   http: ^0.13.3
   package_info_plus: ^1.0.6
@@ -21,7 +24,6 @@ dependencies:
   xapptor_logic: ^0.0.3
 
 dependency_overrides:
-  platform: ^3.1.0
   xapptor_auth:
     path: ../xapptor_auth
   xapptor_logic:

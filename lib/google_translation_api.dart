@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xapptor_auth/get_api_key.dart';
@@ -7,61 +8,172 @@ import 'headers_api_request.dart';
 class GoogleTranslationApi {
   // Call to Google Translation API.
 
+  late SharedPreferences prefs;
+
   Future<String> translate(String original_text) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
+
     if (prefs.getString("target_language") == null)
       prefs.setString("target_language", "en");
     String target_language = prefs.getString("target_language") ?? "en";
 
-    TranslationValueType current_translation_value_type =
-        TranslationValueType.Original;
-    String current_text = "";
+    String current_text = original_text;
 
     if (target_language == "en") {
       current_text = original_text;
+      print(
+          "Returning translation from ${TranslationValueType.original.toShortString()}");
     } else {
-      if (prefs.getString(
-              "translated_text_$original_text\_target_$target_language") !=
+      if (get_local_translated_text(
+            original_text: original_text,
+            target_language: target_language,
+          ) !=
           null) {
-        current_translation_value_type = TranslationValueType.Local;
-
         current_text = prefs.getString(
             "translated_text_$original_text\_target_$target_language")!;
+        print(
+            "Returning translation from ${TranslationValueType.local.toShortString()}");
       } else {
-        try {
-          Map<String, dynamic> response = await fetch_translation_from_endpoint(
-            original_text,
-            target_language,
-          );
+        QuerySnapshot translated_text_query = await FirebaseFirestore.instance
+            .collection("translations")
+            .where("original_text", isEqualTo: original_text)
+            .get();
 
-          if (response["error"] == null) {
-            var result = response['data']['translations'][0]['translatedText'];
+        if (translated_text_query.docs.length > 0) {
+          QueryDocumentSnapshot first_doc = translated_text_query.docs.first;
+          var first_doc_data = first_doc.data() as Map<String, dynamic>;
 
-            prefs.setString(
-                "translated_text_$original_text\_target_$target_language",
-                result);
+          if (first_doc_data["translations"][target_language] != null) {
+            String result = first_doc_data["translations"][target_language];
+            first_doc.reference.update({
+              "last_time_used": Timestamp.now(),
+            });
 
-            //print("Returning translation from ${TranslationValueType.Api.toShortString()}");
+            set_local_translated_text(
+              original_text: original_text,
+              target_language: target_language,
+              value: result,
+            );
+
+            print(
+                "Returning translation from ${TranslationValueType.firebase.toShortString()}");
             return result;
           } else {
-            current_translation_value_type = TranslationValueType.Original;
-            current_text = original_text;
+            return await get_translated_text_from_api(
+              original_text: original_text,
+              target_language: target_language,
+            );
           }
-        } catch (error) {
-          print(error);
-          current_text = original_text;
+        } else {
+          return await get_translated_text_from_api(
+            original_text: original_text,
+            target_language: target_language,
+          );
         }
       }
     }
 
-    //print("Returning translation from ${current_translation_value_type.toShortString()}");
     return current_text;
   }
 
-  Future<Map<String, dynamic>> fetch_translation_from_endpoint(
-    String original_text,
-    String target_language,
-  ) async {
+  Future<String> get_translated_text_from_api({
+    required String original_text,
+    required String target_language,
+  }) async {
+    try {
+      Map<String, dynamic> response = await fetch_translation_from_endpoint(
+        original_text: original_text,
+        target_language: target_language,
+      );
+
+      if (response["error"] == null) {
+        var result = response['data']['translations'][0]['translatedText'];
+
+        set_local_translated_text(
+          original_text: original_text,
+          target_language: target_language,
+          value: result,
+        );
+
+        save_translated_text_in_firestore(
+          original_text: original_text,
+          target_language: target_language,
+          value: result,
+        );
+        print(
+            "Returning translation from ${TranslationValueType.api.toShortString()}");
+        return result;
+      } else {
+        print(response["error"]);
+        print(
+            "Returning translation from ${TranslationValueType.original.toShortString()}");
+        return original_text;
+      }
+    } catch (error) {
+      print(error);
+      print(
+          "Returning translation from ${TranslationValueType.original.toShortString()}");
+      return original_text;
+    }
+  }
+
+  save_translated_text_in_firestore({
+    required String original_text,
+    required String target_language,
+    required String value,
+  }) async {
+    QuerySnapshot translated_text_query = await FirebaseFirestore.instance
+        .collection("translations")
+        .where("original_text", isEqualTo: original_text)
+        .get();
+
+    if (translated_text_query.docs.length > 0) {
+      QueryDocumentSnapshot first_doc = translated_text_query.docs.first;
+      var first_doc_data = first_doc.data() as Map<String, dynamic>;
+      var first_doc_data_translations =
+          first_doc_data["translations"] as Map<String, dynamic>;
+
+      first_doc_data_translations[target_language] = value;
+
+      await FirebaseFirestore.instance
+          .collection("translations")
+          .doc(first_doc.id)
+          .update({
+        "last_time_used": Timestamp.now(),
+        "translations": first_doc_data_translations,
+      });
+    } else {
+      await FirebaseFirestore.instance.collection("translations").doc().set({
+        "last_time_used": Timestamp.now(),
+        "original_text": original_text,
+        "translations": {
+          target_language: value,
+        },
+      });
+    }
+  }
+
+  String? get_local_translated_text({
+    required String original_text,
+    required String target_language,
+  }) {
+    return prefs
+        .getString("translated_text_$original_text\_target_$target_language");
+  }
+
+  set_local_translated_text({
+    required String original_text,
+    required String target_language,
+    required String value,
+  }) {
+    prefs.setString(
+        "translated_text_$original_text\_target_$target_language", value);
+  }
+
+  Future<Map<String, dynamic>> fetch_translation_from_endpoint({
+    required String original_text,
+    required String target_language,
+  }) async {
     String api_key = await get_api_key(
       name: "translation",
       organization: "gcp",
@@ -81,9 +193,10 @@ class GoogleTranslationApi {
 }
 
 enum TranslationValueType {
-  Api,
-  Original,
-  Local,
+  api,
+  firebase,
+  original,
+  local,
 }
 
 extension ParseToString on TranslationValueType {

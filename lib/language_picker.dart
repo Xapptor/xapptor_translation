@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xapptor_auth/get_api_key.dart';
+import 'package:xapptor_logic/check_limit_per_date.dart';
 import 'package:xapptor_translation/translate.dart';
 import 'headers_api_request.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
@@ -10,13 +11,15 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 // LanguagePicker widget.
 
 class LanguagePicker extends StatefulWidget {
-  const LanguagePicker({
+  LanguagePicker({
     required this.translation_stream_list,
     required this.language_picker_items_text_color,
+    this.max_languages_translated_per_day = 5,
   });
 
   final List<TranslationStream> translation_stream_list;
   final Color language_picker_items_text_color;
+  int max_languages_translated_per_day;
 
   @override
   _LanguagePickerState createState() => _LanguagePickerState();
@@ -50,7 +53,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
     if (prefs.getStringList("languages_names") != null &&
         prefs.getStringList("languages_codes") != null) {
-      //print("Returning languages from local storage");
+      //print("Returning languages from local");
 
       languages_names = prefs.getStringList("languages_names")!;
       languages_codes = prefs.getStringList("languages_codes")!;
@@ -73,6 +76,8 @@ class _LanguagePickerState extends State<LanguagePicker> {
         languages_codes.add(language['language']);
       });
 
+      languages_names = languages_names.toSet().toList();
+
       //print("Returning languages from api");
       prefs.setStringList("languages_names", languages_names);
       prefs.setStringList("languages_codes", languages_codes);
@@ -85,6 +90,19 @@ class _LanguagePickerState extends State<LanguagePicker> {
   void initState() {
     super.initState();
     get_available_languages();
+  }
+
+  change_language(String new_language) {
+    language_value = new_language;
+
+    target_language = languages_codes[languages_names.indexOf(language_value)];
+
+    prefs.setString('target_language', target_language);
+    setState(() {});
+
+    widget.translation_stream_list.forEach((translation_stream) {
+      translation_stream.translate();
+    });
   }
 
   @override
@@ -100,18 +118,26 @@ class _LanguagePickerState extends State<LanguagePicker> {
           height: 2,
           color: Colors.white,
         ),
-        onChanged: (new_value) {
-          language_value = new_value!;
-
-          target_language =
-              languages_codes[languages_names.indexOf(language_value)];
-
-          prefs.setString('target_language', target_language);
-          setState(() {});
-
-          widget.translation_stream_list.forEach((translation_stream) {
-            translation_stream.translate();
-          });
+        onChanged: (new_language) {
+          if (new_language!.toLowerCase() == "english") {
+            change_language(new_language);
+          } else {
+            check_limit_per_date(
+              new_value: new_language,
+              context: context,
+              reached_limit_alert_title: "Max languages translated per day!",
+              check_limit_per_date_callback: () {
+                change_language(new_language);
+              },
+              cache_lifetime_in_seconds: Duration.secondsPerDay *
+                  widget.max_languages_translated_per_day,
+              limit: widget.max_languages_translated_per_day,
+              limit_field_name: "translation_limit",
+              array_field_name: "languages",
+              reach_limit: ReachLimit.by_day,
+              save_same_value_multiple_times: false,
+            );
+          }
         },
         selectedItemBuilder: (BuildContext context) {
           return languages_names.map<DropdownMenuItem<String>>((String value) {
