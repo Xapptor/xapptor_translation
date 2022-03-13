@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:xapptor_auth/get_api_key.dart';
+import 'package:xapptor_auth/gak.dart';
 import 'headers_api_request.dart';
 
 class GoogleTranslationApi {
@@ -174,13 +174,13 @@ class GoogleTranslationApi {
     required String original_text,
     required String target_language,
   }) async {
-    String api_key = await get_api_key(
-      name: "translation",
-      organization: "gcp",
+    String ak = await gak(
+      n: "translation",
+      o: "gcp",
     );
 
     String url =
-        'https://translation.googleapis.com/language/translate/v2?source=en&target=$target_language&key=$api_key&q=$original_text&format=text';
+        'https://translation.googleapis.com/language/translate/v2?source=en&target=$target_language&key=$ak&q=$original_text&format=text';
 
     Response response = await get(
       Uri.parse(url),

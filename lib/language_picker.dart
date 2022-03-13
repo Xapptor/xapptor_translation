@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:xapptor_auth/get_api_key.dart';
+import 'package:xapptor_auth/gak.dart';
 import 'package:xapptor_logic/check_limit_per_date.dart';
 import 'package:xapptor_translation/translate.dart';
 import 'headers_api_request.dart';
@@ -58,11 +58,10 @@ class _LanguagePickerState extends State<LanguagePicker> {
       languages_names = prefs.getStringList("languages_names")!;
       languages_codes = prefs.getStringList("languages_codes")!;
     } else {
-      String api_key =
-          await get_api_key(name: "translation", organization: "gcp");
+      String ak = await gak(n: "translation", o: "gcp");
 
       String url =
-          "https://translation.googleapis.com/language/translate/v2/languages?key=$api_key&target=en";
+          "https://translation.googleapis.com/language/translate/v2/languages?key=$ak&target=en";
 
       Response response = await get(
         Uri.parse(url),
