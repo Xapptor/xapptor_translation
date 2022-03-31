@@ -10,29 +10,48 @@ class GoogleTranslationApi {
 
   late SharedPreferences prefs;
 
-  Future<String> translate(String original_text) async {
+  Future<String> translate({
+    required String original_text,
+    required String source_language,
+    required TranslationPrintType translation_print_type,
+    required int index,
+    required int length,
+  }) async {
     prefs = await SharedPreferences.getInstance();
 
-    if (prefs.getString("target_language") == null)
-      prefs.setString("target_language", "en");
-    String target_language = prefs.getString("target_language") ?? "en";
+    String target_language =
+        prefs.getString("target_language") ?? source_language;
 
     String current_text = original_text;
 
-    if (target_language == "en") {
+    if (target_language == source_language) {
       current_text = original_text;
-      print(
-          "Returning translation from ${TranslationValueType.original.toShortString()}");
+
+      _check_translation_print_type(
+        original_text: original_text,
+        returned_text: current_text,
+        translation_value_Type: TranslationValueType.original,
+        translation_print_type: translation_print_type,
+        index: index,
+        length: length,
+      );
     } else {
-      if (get_local_translated_text(
+      if (_get_local_translated_text(
             original_text: original_text,
             target_language: target_language,
           ) !=
           null) {
         current_text = prefs.getString(
             "translated_text_$original_text\_target_$target_language")!;
-        print(
-            "Returning translation from ${TranslationValueType.local.toShortString()}");
+
+        _check_translation_print_type(
+          original_text: original_text,
+          returned_text: current_text,
+          translation_value_Type: TranslationValueType.local,
+          translation_print_type: translation_print_type,
+          index: index,
+          length: length,
+        );
       } else {
         QuerySnapshot translated_text_query = await FirebaseFirestore.instance
             .collection("translations")
@@ -49,25 +68,39 @@ class GoogleTranslationApi {
               "last_time_used": Timestamp.now(),
             });
 
-            set_local_translated_text(
+            _set_local_translated_text(
               original_text: original_text,
               target_language: target_language,
               value: result,
             );
 
-            print(
-                "Returning translation from ${TranslationValueType.firebase.toShortString()}");
+            _check_translation_print_type(
+              original_text: original_text,
+              returned_text: result,
+              translation_value_Type: TranslationValueType.firebase,
+              translation_print_type: translation_print_type,
+              index: index,
+              length: length,
+            );
             return result;
           } else {
-            return await get_translated_text_from_api(
+            return await _get_translated_text_from_api(
               original_text: original_text,
               target_language: target_language,
+              source_language: source_language,
+              translation_print_type: translation_print_type,
+              index: index,
+              length: length,
             );
           }
         } else {
-          return await get_translated_text_from_api(
+          return await _get_translated_text_from_api(
             original_text: original_text,
             target_language: target_language,
+            source_language: source_language,
+            translation_print_type: translation_print_type,
+            index: index,
+            length: length,
           );
         }
       }
@@ -76,48 +109,74 @@ class GoogleTranslationApi {
     return current_text;
   }
 
-  Future<String> get_translated_text_from_api({
+  Future<String> _get_translated_text_from_api({
     required String original_text,
     required String target_language,
+    required String source_language,
+    required TranslationPrintType translation_print_type,
+    required int index,
+    required int length,
   }) async {
     try {
-      Map<String, dynamic> response = await fetch_translation_from_endpoint(
+      Map<String, dynamic> response = await _fetch_translation_from_endpoint(
         original_text: original_text,
         target_language: target_language,
+        source_language: source_language,
       );
 
       if (response["error"] == null) {
         var result = response['data']['translations'][0]['translatedText'];
 
-        set_local_translated_text(
+        _set_local_translated_text(
           original_text: original_text,
           target_language: target_language,
           value: result,
         );
 
-        save_translated_text_in_firestore(
+        _save_translated_text_in_firestore(
           original_text: original_text,
           target_language: target_language,
           value: result,
         );
-        print(
-            "Returning translation from ${TranslationValueType.api.toShortString()}");
+
+        _check_translation_print_type(
+          original_text: original_text,
+          returned_text: result,
+          translation_value_Type: TranslationValueType.api,
+          translation_print_type: translation_print_type,
+          index: index,
+          length: length,
+        );
         return result;
       } else {
         print(response["error"]);
-        print(
-            "Returning translation from ${TranslationValueType.original.toShortString()}");
+
+        _check_translation_print_type(
+          original_text: original_text,
+          returned_text: original_text,
+          translation_value_Type: TranslationValueType.original,
+          translation_print_type: translation_print_type,
+          index: index,
+          length: length,
+        );
         return original_text;
       }
     } catch (error) {
       print(error);
-      print(
-          "Returning translation from ${TranslationValueType.original.toShortString()}");
+
+      _check_translation_print_type(
+        original_text: original_text,
+        returned_text: original_text,
+        translation_value_Type: TranslationValueType.original,
+        translation_print_type: translation_print_type,
+        index: index,
+        length: length,
+      );
       return original_text;
     }
   }
 
-  save_translated_text_in_firestore({
+  _save_translated_text_in_firestore({
     required String original_text,
     required String target_language,
     required String value,
@@ -153,7 +212,7 @@ class GoogleTranslationApi {
     }
   }
 
-  String? get_local_translated_text({
+  String? _get_local_translated_text({
     required String original_text,
     required String target_language,
   }) {
@@ -161,7 +220,7 @@ class GoogleTranslationApi {
         .getString("translated_text_$original_text\_target_$target_language");
   }
 
-  set_local_translated_text({
+  _set_local_translated_text({
     required String original_text,
     required String target_language,
     required String value,
@@ -170,9 +229,10 @@ class GoogleTranslationApi {
         "translated_text_$original_text\_target_$target_language", value);
   }
 
-  Future<Map<String, dynamic>> fetch_translation_from_endpoint({
+  Future<Map<String, dynamic>> _fetch_translation_from_endpoint({
     required String original_text,
     required String target_language,
+    required String source_language,
   }) async {
     String ak = await gak(
       n: "translation",
@@ -180,7 +240,7 @@ class GoogleTranslationApi {
     );
 
     String url =
-        'https://translation.googleapis.com/language/translate/v2?source=en&target=$target_language&key=$ak&q=$original_text&format=text';
+        'https://translation.googleapis.com/language/translate/v2?source=$source_language&target=$target_language&key=$ak&q=$original_text&format=text';
 
     Response response = await get(
       Uri.parse(url),
@@ -190,6 +250,43 @@ class GoogleTranslationApi {
     //print("response ${reponse_body}");
     return reponse_body;
   }
+
+  _check_translation_print_type({
+    required String original_text,
+    required String returned_text,
+    required TranslationValueType translation_value_Type,
+    required TranslationPrintType translation_print_type,
+    required int index,
+    required int length,
+  }) {
+    String message =
+        "Returning translation from \x1B[35m${translation_value_Type.toShortString()}\x1B[0m";
+    String original_text_message = "O: $original_text";
+    String returned_text_message = "R: $returned_text \n";
+    switch (translation_print_type) {
+      case TranslationPrintType.none:
+        break;
+      case TranslationPrintType.all:
+        print(message);
+        print(original_text_message);
+        print(returned_text_message);
+        break;
+      case TranslationPrintType.first:
+        if (index == 0) {
+          print(message);
+          print(original_text_message);
+          print(returned_text_message);
+        }
+        break;
+      case TranslationPrintType.last:
+        if (index == length) {
+          print(message);
+          print(original_text_message);
+          print(returned_text_message);
+        }
+        break;
+    }
+  }
 }
 
 enum TranslationValueType {
@@ -197,6 +294,13 @@ enum TranslationValueType {
   firebase,
   original,
   local,
+}
+
+enum TranslationPrintType {
+  none,
+  all,
+  first,
+  last,
 }
 
 extension ParseToString on TranslationValueType {
