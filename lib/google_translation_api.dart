@@ -259,8 +259,19 @@ class GoogleTranslationApi {
     required int index,
     required int length,
   }) {
+    String color_code = "35";
+
+    if (translation_value_Type == TranslationValueType.local) {
+      color_code = "32";
+    } else if (translation_value_Type == TranslationValueType.firebase) {
+      color_code = "33";
+    } else if (translation_value_Type == TranslationValueType.api) {
+      color_code = "31";
+    }
+
     String message =
-        "Returning translation from \x1B[35m${translation_value_Type.toShortString()}\x1B[0m";
+        "Returning translation from \x1B[${color_code}m${translation_value_Type.toShortString()}\x1B[0m";
+
     String original_text_message = "O: $original_text";
     String returned_text_message = "R: $returned_text \n";
     switch (translation_print_type) {
@@ -305,6 +316,6 @@ enum TranslationPrintType {
 
 extension ParseToString on TranslationValueType {
   String toShortString() {
-    return this.toString().toLowerCase().split('.').last;
+    return this.toString().split('.').last;
   }
 }
