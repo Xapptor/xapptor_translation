@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xapptor_auth/gak.dart';
+import 'package:xapptor_logic/change_color_by_priority.dart';
 import 'headers_api_request.dart';
 
 class GoogleTranslationApi {
@@ -259,18 +260,21 @@ class GoogleTranslationApi {
     required int index,
     required int length,
   }) {
-    String color_code = "35";
+    TextPriority text_priority = TextPriority.low;
 
     if (translation_value_Type == TranslationValueType.local) {
-      color_code = "32";
+      text_priority = TextPriority.medium;
     } else if (translation_value_Type == TranslationValueType.firebase) {
-      color_code = "33";
+      text_priority = TextPriority.high;
     } else if (translation_value_Type == TranslationValueType.api) {
-      color_code = "31";
+      text_priority = TextPriority.urgent;
     }
 
+    String translation_value_Type_text = change_color_by_priority(
+        translation_value_Type.toShortString(), text_priority);
+
     String message =
-        "Returning translation from \x1B[${color_code}m${translation_value_Type.toShortString()}\x1B[0m";
+        "Returning translation from ${translation_value_Type_text}";
 
     String original_text_message = "O: $original_text";
     String returned_text_message = "R: $returned_text \n";
