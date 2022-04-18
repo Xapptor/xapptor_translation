@@ -86,7 +86,7 @@ class TranslationStream {
         original_text: original_texts[i],
         source_language: translation_text_list_array
             .translation_text_list_array[source_language_index].source_language,
-        translation_print_type: TranslationPrintType.all,
+        translation_print_type: TranslationPrintType.none,
         index: i,
         length: streams.length,
       );
