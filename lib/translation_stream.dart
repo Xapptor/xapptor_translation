@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:core';
 import 'package:xapptor_logic/check_share_preferences_cache.dart';
+import 'package:xapptor_translation/model/enum.dart';
 import 'package:xapptor_translation/model/text_list.dart';
-import 'google_translation_api.dart';
+import 'translation_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // TranslationStream model.
@@ -82,11 +83,11 @@ class TranslationStream {
       original_texts
           .add(translation_text_list_array.get(source_language_index)[i]);
 
-      String translated_text = await GoogleTranslationApi().translate(
+      String translated_text = await TranslationManager().translate(
         original_text: original_texts[i],
         source_language: translation_text_list_array
             .translation_text_list_array[source_language_index].source_language,
-        translation_print_type: TranslationPrintType.none,
+        translation_print_type: TranslationPrintType.all,
         index: i,
         length: streams.length,
       );
