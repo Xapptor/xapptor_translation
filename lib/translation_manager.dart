@@ -7,13 +7,10 @@ import 'package:xapptor_translation/model/enum.dart';
 import 'package:xapptor_translation/set_local_translated_text.dart';
 
 class TranslationManager {
-  // Call to Google Translation API.
-
   Future<String> translate({
     required String original_text,
     required String source_language,
     required TranslationPrintType translation_print_type,
-    required int index,
     required int length,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -31,7 +28,6 @@ class TranslationManager {
         returned_text: current_text,
         translation_value_Type: TranslationValueType.original,
         translation_print_type: translation_print_type,
-        index: index,
         length: length,
       );
     } else {
@@ -49,7 +45,6 @@ class TranslationManager {
           returned_text: current_text,
           translation_value_Type: TranslationValueType.local,
           translation_print_type: translation_print_type,
-          index: index,
           length: length,
         );
       } else {
@@ -80,7 +75,6 @@ class TranslationManager {
               returned_text: result,
               translation_value_Type: TranslationValueType.firebase,
               translation_print_type: translation_print_type,
-              index: index,
               length: length,
             );
             return result;
@@ -90,9 +84,8 @@ class TranslationManager {
               target_language: target_language,
               source_language: source_language,
               translation_print_type: translation_print_type,
-              index: index,
-              length: length,
               prefs: prefs,
+              legnth: length,
             );
           }
         } else {
@@ -101,9 +94,8 @@ class TranslationManager {
             target_language: target_language,
             source_language: source_language,
             translation_print_type: translation_print_type,
-            index: index,
-            length: length,
             prefs: prefs,
+            legnth: length,
           );
         }
       }

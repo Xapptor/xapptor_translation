@@ -156,9 +156,18 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
     setState(() {});
 
+    int total_length = 0;
+
+    widget.translation_stream_list.forEach((translation_stream) {
+      total_length += translation_stream.translation_text_list_array
+          .translation_text_list_array.first.text_list.length;
+    });
+
     widget.translation_stream_list.forEach((translation_stream) {
       translation_stream.translate(
-          source_language_index: new_source_language_index);
+        source_language_index: new_source_language_index,
+        length: total_length,
+      );
     });
   }
 

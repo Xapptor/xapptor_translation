@@ -6,8 +6,6 @@ import 'package:xapptor_translation/model/text_list.dart';
 import 'translation_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// TranslationStream model.
-
 class TranslationStream {
   List<StreamController<String>> stream_controllers = [];
   List<Stream> streams = [];
@@ -24,7 +22,6 @@ class TranslationStream {
     })
         update_text_list_function,
     required int list_index,
-    bool enable_initial_translation = false,
     int cache_lifetime_in_seconds = Duration.secondsPerDay * 30,
     required int source_language_index,
   }) {
@@ -53,19 +50,12 @@ class TranslationStream {
         original_texts[i],
       );
     }
-    if (enable_initial_translation) {
-      Timer(Duration(milliseconds: 300), () {
-        translate(
-          cache_lifetime_in_seconds: cache_lifetime_in_seconds,
-          source_language_index: source_language_index,
-        );
-      });
-    }
   }
 
   translate({
     int cache_lifetime_in_seconds = Duration.secondsPerDay * 30,
     required int source_language_index,
+    required int length,
   }) async {
     check_share_preferences_cache(
       key_to_check: "last_date_translations_updated",
@@ -87,9 +77,8 @@ class TranslationStream {
         original_text: original_texts[i],
         source_language: translation_text_list_array
             .translation_text_list_array[source_language_index].source_language,
-        translation_print_type: TranslationPrintType.all,
-        index: i,
-        length: streams.length,
+        translation_print_type: TranslationPrintType.none,
+        length: length,
       );
 
       stream_controllers[i].add(translated_text);

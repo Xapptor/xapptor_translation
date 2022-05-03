@@ -10,9 +10,8 @@ Future<String> get_translated_text_from_api({
   required String target_language,
   required String source_language,
   required TranslationPrintType translation_print_type,
-  required int index,
-  required int length,
   required SharedPreferences prefs,
+  required int legnth,
 }) async {
   try {
     Map<String, dynamic> response = await fetch_translation_from_endpoint(
@@ -42,8 +41,7 @@ Future<String> get_translated_text_from_api({
         returned_text: result,
         translation_value_Type: TranslationValueType.api,
         translation_print_type: translation_print_type,
-        index: index,
-        length: length,
+        length: legnth,
       );
       return result;
     } else {
@@ -54,8 +52,7 @@ Future<String> get_translated_text_from_api({
         returned_text: original_text,
         translation_value_Type: TranslationValueType.original,
         translation_print_type: translation_print_type,
-        index: index,
-        length: length,
+        length: legnth,
       );
       return original_text;
     }
@@ -67,8 +64,7 @@ Future<String> get_translated_text_from_api({
       returned_text: original_text,
       translation_value_Type: TranslationValueType.original,
       translation_print_type: translation_print_type,
-      index: index,
-      length: length,
+      length: legnth,
     );
     return original_text;
   }
