@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -153,6 +154,8 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
     widget.update_source_language(
         new_source_language_index: new_source_language_index);
+
+    FirebaseAuth.instance.setLanguageCode(target_language);
 
     setState(() {});
 
