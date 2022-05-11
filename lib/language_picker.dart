@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -58,11 +57,8 @@ class _LanguagePickerState extends State<LanguagePicker> {
     prefs = await SharedPreferences.getInstance();
 
     target_language = prefs.getString("target_language") ??
-        widget
-            .translation_stream_list[0]
-            .translation_text_list_array
-            .translation_text_list_array[widget.source_language_index]
-            .source_language;
+        widget.translation_stream_list[0].translation_text_list_array
+            .list[widget.source_language_index].source_language;
 
     //print("target_language: " + target_language);
 
@@ -112,21 +108,23 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
     target_language = languages_codes[languages_names.indexOf(language_value)];
 
-    List<TranslationTextList> target_language_is_source_language = widget
-        .translation_stream_list[0]
-        .translation_text_list_array
-        .translation_text_list_array
-        .where((element) => target_language == element.source_language)
-        .toList();
+    TranslationTextList? target_language_is_source_language;
+
+    widget.translation_stream_list[0].translation_text_list_array.list
+        .forEach((element) {
+      if (target_language == element.source_language) {
+        target_language_is_source_language = element;
+      }
+    });
 
     int new_source_language_index = 0;
 
     //print("target_language_is_source_language: " + target_language_is_source_language.first.source_language);
 
-    if (target_language_is_source_language.length > 0) {
-      new_source_language_index = widget.translation_stream_list[0]
-          .translation_text_list_array.translation_text_list_array
-          .indexOf(target_language_is_source_language.first);
+    if (target_language_is_source_language != null) {
+      new_source_language_index = widget
+          .translation_stream_list[0].translation_text_list_array.list
+          .indexOf(target_language_is_source_language!);
 
       change_language(new_source_language_index);
     } else {
@@ -162,8 +160,8 @@ class _LanguagePickerState extends State<LanguagePicker> {
     int total_length = 0;
 
     widget.translation_stream_list.forEach((translation_stream) {
-      total_length += translation_stream.translation_text_list_array
-          .translation_text_list_array.first.text_list.length;
+      total_length += translation_stream
+          .translation_text_list_array.list.first.text_list.length;
     });
 
     widget.translation_stream_list.forEach((translation_stream) {

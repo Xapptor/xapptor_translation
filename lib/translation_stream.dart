@@ -76,7 +76,7 @@ class TranslationStream {
       String translated_text = await TranslationManager().translate(
         original_text: original_texts[i],
         source_language: translation_text_list_array
-            .translation_text_list_array[source_language_index].source_language,
+            .list[source_language_index].source_language,
         translation_print_type: TranslationPrintType.none,
         length: length,
       );

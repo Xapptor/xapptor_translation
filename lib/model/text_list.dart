@@ -10,12 +10,12 @@ class TranslationTextList {
 
 class TranslationTextListArray {
   TranslationTextListArray(
-    this.translation_text_list_array,
+    this.list,
   );
 
-  final List<TranslationTextList> translation_text_list_array;
+  final List<TranslationTextList> list;
 
   List<String> get(int source_language_index) {
-    return this.translation_text_list_array[source_language_index].text_list;
+    return this.list[source_language_index].text_list;
   }
 }
