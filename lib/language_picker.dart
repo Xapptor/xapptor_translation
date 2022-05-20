@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xapptor_auth/gak.dart';
 import 'package:xapptor_logic/check_limit_per_date.dart';
-import 'package:xapptor_translation/translate.dart';
+import 'package:xapptor_translation/model/text_list.dart';
+import 'package:xapptor_translation/translation_stream.dart';
 import 'headers_api_request.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
@@ -15,11 +17,18 @@ class LanguagePicker extends StatefulWidget {
     required this.translation_stream_list,
     required this.language_picker_items_text_color,
     this.max_languages_translated_per_day = 5,
+    this.source_language_index = 0,
+    required this.update_source_language,
+    this.enable_initial_translation = true,
   });
 
   final List<TranslationStream> translation_stream_list;
   final Color language_picker_items_text_color;
   int max_languages_translated_per_day;
+  int source_language_index;
+  final Function({required int new_source_language_index})
+      update_source_language;
+  final bool enable_initial_translation;
 
   @override
   _LanguagePickerState createState() => _LanguagePickerState();
@@ -36,17 +45,22 @@ class _LanguagePickerState extends State<LanguagePicker> {
   String target_language = "en";
   late SharedPreferences prefs;
 
+  @override
+  void initState() {
+    super.initState();
+    get_available_languages();
+  }
+
   // Get available languages.
 
   get_available_languages() async {
     prefs = await SharedPreferences.getInstance();
 
-    if (prefs.getString("target_language") != null) {
-      target_language = prefs.getString("target_language")!;
-    } else {
-      target_language = "en";
-      prefs.setString("target_language", target_language);
-    }
+    target_language = prefs.getString("target_language") ??
+        widget.translation_stream_list[0].translation_text_list_array
+            .list[widget.source_language_index].source_language;
+
+    //print("target_language: " + target_language);
 
     languages_names.clear();
     languages_codes.clear();
@@ -83,24 +97,78 @@ class _LanguagePickerState extends State<LanguagePicker> {
     }
     language_value = languages_names[languages_codes.indexOf(target_language)];
     setState(() {});
+
+    if (widget.enable_initial_translation) {
+      check_translation_availability(language_value);
+    }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    get_available_languages();
-  }
-
-  change_language(String new_language) {
+  check_translation_availability(String new_language) {
     language_value = new_language;
 
     target_language = languages_codes[languages_names.indexOf(language_value)];
 
-    prefs.setString('target_language', target_language);
+    TranslationTextList? target_language_is_source_language;
+
+    widget.translation_stream_list[0].translation_text_list_array.list
+        .forEach((element) {
+      if (target_language == element.source_language) {
+        target_language_is_source_language = element;
+      }
+    });
+
+    int new_source_language_index = 0;
+
+    //print("target_language_is_source_language: " + target_language_is_source_language.first.source_language);
+
+    if (target_language_is_source_language != null) {
+      new_source_language_index = widget
+          .translation_stream_list[0].translation_text_list_array.list
+          .indexOf(target_language_is_source_language!);
+
+      change_language(new_source_language_index);
+    } else {
+      check_limit_per_date(
+        new_value: new_language,
+        context: context,
+        reached_limit_alert_title: "Max languages translated per day!",
+        check_limit_per_date_callback: () {
+          change_language(new_source_language_index);
+        },
+        cache_lifetime_in_seconds:
+            Duration.secondsPerDay * widget.max_languages_translated_per_day,
+        limit: widget.max_languages_translated_per_day,
+        limit_field_name: "translation_limit",
+        array_field_name: "languages",
+        reach_limit: ReachLimit.by_day,
+        save_same_value_multiple_times: false,
+      );
+    }
+  }
+
+  change_language(int new_source_language_index) {
+    prefs.setString("target_language", target_language);
+    //print("set target_language: " + target_language);
+
+    widget.update_source_language(
+        new_source_language_index: new_source_language_index);
+
+    FirebaseAuth.instance.setLanguageCode(target_language);
+
     setState(() {});
 
+    int total_length = 0;
+
     widget.translation_stream_list.forEach((translation_stream) {
-      translation_stream.translate();
+      total_length += translation_stream
+          .translation_text_list_array.list.first.text_list.length;
+    });
+
+    widget.translation_stream_list.forEach((translation_stream) {
+      translation_stream.translate(
+        source_language_index: new_source_language_index,
+        length: total_length,
+      );
     });
   }
 
@@ -118,25 +186,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
           color: Colors.white,
         ),
         onChanged: (new_language) {
-          if (new_language!.toLowerCase() == "english") {
-            change_language(new_language);
-          } else {
-            check_limit_per_date(
-              new_value: new_language,
-              context: context,
-              reached_limit_alert_title: "Max languages translated per day!",
-              check_limit_per_date_callback: () {
-                change_language(new_language);
-              },
-              cache_lifetime_in_seconds: Duration.secondsPerDay *
-                  widget.max_languages_translated_per_day,
-              limit: widget.max_languages_translated_per_day,
-              limit_field_name: "translation_limit",
-              array_field_name: "languages",
-              reach_limit: ReachLimit.by_day,
-              save_same_value_multiple_times: false,
-            );
-          }
+          check_translation_availability(new_language!);
         },
         selectedItemBuilder: (BuildContext context) {
           return languages_names.map<DropdownMenuItem<String>>((String value) {
