@@ -66,6 +66,7 @@ class _ExampleWidgetState extends State<ExampleWidget> {
     Widget build(BuildContext context) {
         return Scaffold(
             appBar: TopBar(
+                context: context,
                 background_color: Colors.blue,
                 has_back_button: true,
                 actions: <Widget>[
