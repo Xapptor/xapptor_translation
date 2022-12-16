@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:core';
-import 'package:xapptor_logic/check_share_preferences_cache.dart';
+import 'package:xapptor_logic/clean_share_preferences_cache.dart';
 import 'package:xapptor_translation/model/enum.dart';
 import 'package:xapptor_translation/model/text_list.dart';
 import 'translation_manager.dart';
@@ -57,7 +57,7 @@ class TranslationStream {
     required int source_language_index,
     required int length,
   }) async {
-    check_share_preferences_cache(
+    clean_share_preferences_cache(
       key_to_check: "last_date_translations_updated",
       similar_keys_to_delete: "translated_text_",
       specific_keys_to_delete: [
