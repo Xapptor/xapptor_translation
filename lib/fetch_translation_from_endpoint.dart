@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:xapptor_auth/gak.dart';
+import 'package:xapptor_api_key/gak.dart';
 import 'package:xapptor_translation/headers_api_request.dart';
 
 Future<Map<String, dynamic>> fetch_translation_from_endpoint({
