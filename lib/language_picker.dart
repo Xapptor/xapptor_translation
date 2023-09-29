@@ -193,7 +193,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
               value: value,
               child: Text(
                 value,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                 ),
