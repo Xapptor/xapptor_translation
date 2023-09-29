@@ -123,7 +123,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
     if (target_language_is_source_language != null) {
       new_source_language_index = widget
           .translation_stream_list[0].translation_text_list_array.list
-          .indexOf(target_language_is_source_language!);
+          .indexOf(target_language_is_source_language);
 
       change_language(new_source_language_index);
     } else {
