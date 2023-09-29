@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,8 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 // LanguagePicker widget.
 
 class LanguagePicker extends StatefulWidget {
-  LanguagePicker({super.key, 
+  LanguagePicker({
+    super.key,
     required this.translation_stream_list,
     required this.language_picker_items_text_color,
     this.max_languages_translated_per_day = 5,
@@ -26,12 +29,11 @@ class LanguagePicker extends StatefulWidget {
   final Color language_picker_items_text_color;
   int max_languages_translated_per_day;
   int source_language_index;
-  final Function({required int new_source_language_index})
-      update_source_language;
+  final Function({required int new_source_language_index}) update_source_language;
   final bool enable_initial_translation;
 
   @override
-  _LanguagePickerState createState() => _LanguagePickerState();
+  State<LanguagePicker> createState() => _LanguagePickerState();
 }
 
 class _LanguagePickerState extends State<LanguagePicker> {
@@ -57,25 +59,23 @@ class _LanguagePickerState extends State<LanguagePicker> {
     prefs = await SharedPreferences.getInstance();
 
     target_language = prefs.getString("target_language") ??
-        widget.translation_stream_list[0].translation_text_list_array
-            .list[widget.source_language_index].source_language;
+        widget
+            .translation_stream_list[0].translation_text_list_array.list[widget.source_language_index].source_language;
 
-    //print("target_language: " + target_language);
+    //debugPrint("target_language: " + target_language);
 
     languages_names.clear();
     languages_codes.clear();
 
-    if (prefs.getStringList("languages_names") != null &&
-        prefs.getStringList("languages_codes") != null) {
-      //print("Returning languages from local");
+    if (prefs.getStringList("languages_names") != null && prefs.getStringList("languages_codes") != null) {
+      //debugPrint("Returning languages from local");
 
       languages_names = prefs.getStringList("languages_names")!;
       languages_codes = prefs.getStringList("languages_codes")!;
     } else {
       String ak = await gak(n: "translation", o: "gcp");
 
-      String url =
-          "https://translation.googleapis.com/language/translate/v2/languages?key=$ak&target=en";
+      String url = "https://translation.googleapis.com/language/translate/v2/languages?key=$ak&target=en";
 
       Response response = await get(
         Uri.parse(url),
@@ -91,7 +91,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
       languages_names = languages_names.toSet().toList();
 
-      //print("Returning languages from api");
+      //debugPrint("Returning languages from api");
       prefs.setStringList("languages_names", languages_names);
       prefs.setStringList("languages_codes", languages_codes);
     }
@@ -118,11 +118,10 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
     int new_source_language_index = 0;
 
-    //print("target_language_is_source_language: " + target_language_is_source_language.first.source_language);
+    //debugPrint("target_language_is_source_language: " + target_language_is_source_language.first.source_language);
 
     if (target_language_is_source_language != null) {
-      new_source_language_index = widget
-          .translation_stream_list[0].translation_text_list_array.list
+      new_source_language_index = widget.translation_stream_list[0].translation_text_list_array.list
           .indexOf(target_language_is_source_language);
 
       change_language(new_source_language_index);
@@ -134,8 +133,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
         check_limit_per_date_callback: () {
           change_language(new_source_language_index);
         },
-        cache_lifetime_in_seconds:
-            Duration.secondsPerDay * widget.max_languages_translated_per_day,
+        cache_lifetime_in_seconds: Duration.secondsPerDay * widget.max_languages_translated_per_day,
         limit: widget.max_languages_translated_per_day,
         limit_field_name: "translation_limit",
         array_field_name: "languages",
@@ -147,10 +145,9 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
   change_language(int new_source_language_index) {
     prefs.setString("target_language", target_language);
-    //print("set target_language: " + target_language);
+    //debugPrint("set target_language: " + target_language);
 
-    widget.update_source_language(
-        new_source_language_index: new_source_language_index);
+    widget.update_source_language(new_source_language_index: new_source_language_index);
 
     FirebaseAuth.instance.setLanguageCode(target_language);
 
@@ -159,8 +156,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
     int total_length = 0;
 
     for (var translation_stream in widget.translation_stream_list) {
-      total_length += translation_stream
-          .translation_text_list_array.list.first.text_list.length;
+      total_length += translation_stream.translation_text_list_array.list.first.text_list.length;
     }
 
     for (var translation_stream in widget.translation_stream_list) {

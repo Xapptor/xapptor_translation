@@ -1,5 +1,6 @@
 import 'package:xapptor_logic/change_color_by_priority.dart';
 import 'package:xapptor_translation/model/enum.dart';
+import 'package:flutter/foundation.dart';
 
 int original_counter = 0;
 int local_counter = 0;
@@ -36,8 +37,7 @@ print_translation_info({
 
   index++;
 
-  String translation_value_Type_text = change_color_by_priority(
-      translation_value_Type.toShortString(), text_priority);
+  String translation_value_Type_text = change_color_by_priority(translation_value_Type.toShortString(), text_priority);
 
   String message = "Returning translation from $translation_value_Type_text";
 
@@ -47,9 +47,9 @@ print_translation_info({
     case TranslationPrintType.none:
       break;
     case TranslationPrintType.all:
-      print(message);
-      print(original_text_message);
-      print(returned_text_message);
+      debugPrint(message);
+      debugPrint(original_text_message);
+      debugPrint(returned_text_message);
 
       if (index == length) {
         print_counters(length: length);
@@ -57,9 +57,9 @@ print_translation_info({
       break;
     case TranslationPrintType.first:
       if (index == 1) {
-        print(message);
-        print(original_text_message);
-        print(returned_text_message);
+        debugPrint(message);
+        debugPrint(original_text_message);
+        debugPrint(returned_text_message);
       }
 
       if (index == length) {
@@ -68,9 +68,9 @@ print_translation_info({
       break;
     case TranslationPrintType.last:
       if (index == length) {
-        print(message);
-        print(original_text_message);
-        print(returned_text_message);
+        debugPrint(message);
+        debugPrint(original_text_message);
+        debugPrint(returned_text_message);
 
         print_counters(length: length);
       }
@@ -82,41 +82,35 @@ print_counters({
   required int length,
 }) {
   if (original_counter > 0) {
-    String message =
-        "Translated $original_counter original texts, size $length";
+    String message = "Translated $original_counter original texts, size $length";
 
-    String message_with_color_priority =
-        change_color_by_priority(message, TextPriority.low);
+    String message_with_color_priority = change_color_by_priority(message, TextPriority.low);
 
-    print(message_with_color_priority);
+    debugPrint(message_with_color_priority);
   }
 
   if (local_counter > 0) {
     String message = "Translated $local_counter local texts, size $length";
 
-    String message_with_color_priority =
-        change_color_by_priority(message, TextPriority.medium);
+    String message_with_color_priority = change_color_by_priority(message, TextPriority.medium);
 
-    print(message_with_color_priority);
+    debugPrint(message_with_color_priority);
   }
 
   if (firebase_counter > 0) {
-    String message =
-        "Translated $firebase_counter firebase texts, size $length";
+    String message = "Translated $firebase_counter firebase texts, size $length";
 
-    String message_with_color_priority =
-        change_color_by_priority(message, TextPriority.high);
+    String message_with_color_priority = change_color_by_priority(message, TextPriority.high);
 
-    print(message_with_color_priority);
+    debugPrint(message_with_color_priority);
   }
 
   if (api_counter > 0) {
     String message = "Translated $api_counter api texts, size $length";
 
-    String message_with_color_priority =
-        change_color_by_priority(message, TextPriority.urgent);
+    String message_with_color_priority = change_color_by_priority(message, TextPriority.urgent);
 
-    print(message_with_color_priority);
+    debugPrint(message_with_color_priority);
   }
 
   index = 0;

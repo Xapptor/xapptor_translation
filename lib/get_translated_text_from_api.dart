@@ -4,6 +4,7 @@ import 'package:xapptor_translation/model/enum.dart';
 import 'package:xapptor_translation/print_translation_info.dart';
 import 'package:xapptor_translation/save_translated_text_in_firestore.dart';
 import 'package:xapptor_translation/set_local_translated_text.dart';
+import 'package:flutter/foundation.dart';
 
 Future<String> get_translated_text_from_api({
   required String original_text,
@@ -45,7 +46,7 @@ Future<String> get_translated_text_from_api({
       );
       return result;
     } else {
-      print(response["error"]);
+      debugPrint(response["error"]);
 
       print_translation_info(
         original_text: original_text,
@@ -57,7 +58,7 @@ Future<String> get_translated_text_from_api({
       return original_text;
     }
   } catch (error) {
-    print(error);
+    debugPrint(error.toString());
 
     print_translation_info(
       original_text: original_text,

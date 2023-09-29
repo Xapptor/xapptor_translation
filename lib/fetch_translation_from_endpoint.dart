@@ -21,6 +21,6 @@ Future<Map<String, dynamic>> fetch_translation_from_endpoint({
     headers: await headers_api_request(),
   );
   Map<String, dynamic> reponse_body = jsonDecode(response.body);
-  //print("response ${reponse_body}");
+  //debugPrint("response ${reponse_body}");
   return reponse_body;
 }

@@ -1,6 +1,7 @@
 name: xapptor_translation
 description: Translation module to use Google translation services and save values in local storage.
-repository: https://github.com/Xapptor/xapptor_translation
+# repository: https://github.com/Xapptor/xapptor_translation
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 0.0.3
 
 environment:
