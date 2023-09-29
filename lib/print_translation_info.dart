@@ -39,7 +39,7 @@ print_translation_info({
   String translation_value_Type_text = change_color_by_priority(
       translation_value_Type.toShortString(), text_priority);
 
-  String message = "Returning translation from ${translation_value_Type_text}";
+  String message = "Returning translation from $translation_value_Type_text";
 
   String original_text_message = "O: $original_text";
   String returned_text_message = "R: $returned_text \n";
@@ -83,7 +83,7 @@ print_counters({
 }) {
   if (original_counter > 0) {
     String message =
-        "Translated $original_counter original texts, size ${length}";
+        "Translated $original_counter original texts, size $length";
 
     String message_with_color_priority =
         change_color_by_priority(message, TextPriority.low);
@@ -92,7 +92,7 @@ print_counters({
   }
 
   if (local_counter > 0) {
-    String message = "Translated $local_counter local texts, size ${length}";
+    String message = "Translated $local_counter local texts, size $length";
 
     String message_with_color_priority =
         change_color_by_priority(message, TextPriority.medium);
@@ -102,7 +102,7 @@ print_counters({
 
   if (firebase_counter > 0) {
     String message =
-        "Translated $firebase_counter firebase texts, size ${length}";
+        "Translated $firebase_counter firebase texts, size $length";
 
     String message_with_color_priority =
         change_color_by_priority(message, TextPriority.high);
@@ -111,7 +111,7 @@ print_counters({
   }
 
   if (api_counter > 0) {
-    String message = "Translated $api_counter api texts, size ${length}";
+    String message = "Translated $api_counter api texts, size $length";
 
     String message_with_color_priority =
         change_color_by_priority(message, TextPriority.urgent);
