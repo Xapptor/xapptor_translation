@@ -13,7 +13,7 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 // LanguagePicker widget.
 
 class LanguagePicker extends StatefulWidget {
-  LanguagePicker({
+  LanguagePicker({super.key, 
     required this.translation_stream_list,
     required this.language_picker_items_text_color,
     this.max_languages_translated_per_day = 5,
