@@ -38,7 +38,7 @@ class TranslationManager {
           ) !=
           null) {
         current_text = prefs.getString(
-            "translated_text_$original_text\_target_$target_language")!;
+            "translated_text_${original_text}_target_$target_language")!;
 
         print_translation_info(
           original_text: original_text,
