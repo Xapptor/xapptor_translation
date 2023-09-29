@@ -16,6 +16,6 @@ class TranslationTextListArray {
   final List<TranslationTextList> list;
 
   List<String> get(int source_language_index) {
-    return this.list[source_language_index].text_list;
+    return list[source_language_index].text_list;
   }
 }

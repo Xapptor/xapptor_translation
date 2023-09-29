@@ -14,6 +14,6 @@ enum TranslationPrintType {
 
 extension ParseToString on TranslationValueType {
   String toShortString() {
-    return this.toString().split('.').last;
+    return toString().split('.').last;
   }
 }
