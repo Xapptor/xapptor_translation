@@ -84,10 +84,10 @@ class _LanguagePickerState extends State<LanguagePicker> {
       Map<String, dynamic> body = jsonDecode(response.body);
       List<dynamic> languages = body['data']['languages'];
 
-      languages.forEach((language) {
+      for (var language in languages) {
         languages_names.add(language['name']);
         languages_codes.add(language['language']);
-      });
+      }
 
       languages_names = languages_names.toSet().toList();
 
@@ -110,12 +110,11 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
     TranslationTextList? target_language_is_source_language;
 
-    widget.translation_stream_list[0].translation_text_list_array.list
-        .forEach((element) {
+    for (var element in widget.translation_stream_list[0].translation_text_list_array.list) {
       if (target_language == element.source_language) {
         target_language_is_source_language = element;
       }
-    });
+    }
 
     int new_source_language_index = 0;
 
@@ -159,17 +158,17 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
     int total_length = 0;
 
-    widget.translation_stream_list.forEach((translation_stream) {
+    for (var translation_stream in widget.translation_stream_list) {
       total_length += translation_stream
           .translation_text_list_array.list.first.text_list.length;
-    });
+    }
 
-    widget.translation_stream_list.forEach((translation_stream) {
+    for (var translation_stream in widget.translation_stream_list) {
       translation_stream.translate(
         source_language_index: new_source_language_index,
         length: total_length,
       );
-    });
+    }
   }
 
   @override
