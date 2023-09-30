@@ -10,7 +10,7 @@ save_translated_text_in_firestore({
       .where("original_text", isEqualTo: original_text)
       .get();
 
-  if (translated_text_query.docs.length > 0) {
+  if (translated_text_query.docs.isNotEmpty) {
     QueryDocumentSnapshot first_doc = translated_text_query.docs.first;
     var first_doc_data = first_doc.data() as Map<String, dynamic>;
     var first_doc_data_translations =

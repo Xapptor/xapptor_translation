@@ -38,7 +38,7 @@ class TranslationManager {
           ) !=
           null) {
         current_text = prefs.getString(
-            "translated_text_$original_text\_target_$target_language")!;
+            "translated_text_${original_text}_target_$target_language")!;
 
         print_translation_info(
           original_text: original_text,
@@ -53,7 +53,7 @@ class TranslationManager {
             .where("original_text", isEqualTo: original_text)
             .get();
 
-        if (translated_text_query.docs.length > 0) {
+        if (translated_text_query.docs.isNotEmpty) {
           QueryDocumentSnapshot first_doc = translated_text_query.docs.first;
           var first_doc_data = first_doc.data() as Map<String, dynamic>;
 

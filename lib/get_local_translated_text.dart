@@ -6,5 +6,5 @@ String? get_local_translated_text({
   required SharedPreferences prefs,
 }) {
   return prefs
-      .getString("translated_text_$original_text\_target_$target_language");
+      .getString("translated_text_${original_text}_target_$target_language");
 }
