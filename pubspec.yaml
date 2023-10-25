@@ -14,7 +14,7 @@ dependencies:
   firebase_auth: ^4.10.0
   cloud_firestore: ^4.9.2
 
-  shared_preferences: ^2.2.1
+  shared_preferences: ^2.2.2
   universal_platform: ^1.0.0+1
   http: ^1.1.0
   package_info_plus: ^4.1.0
