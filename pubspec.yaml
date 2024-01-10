@@ -17,7 +17,7 @@ dependencies:
   shared_preferences: ^2.2.2
   universal_platform: ^1.0.0+1
   http: ^1.1.0
-  package_info_plus: ^4.1.0
+  package_info_plus: ^5.0.1
   pointer_interceptor: ^0.9.3+6
 
   # xapptor_api_key:
