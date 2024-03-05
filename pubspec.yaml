@@ -11,8 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  firebase_auth: ^4.17.6
-  cloud_firestore: ^4.15.6
+  firebase_auth: ^4.17.7
+  cloud_firestore: ^4.15.7
 
   shared_preferences: ^2.2.2
   universal_platform: ^1.0.0+1
