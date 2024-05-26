@@ -15,7 +15,7 @@ dependencies:
   cloud_firestore: ^4.17.2
 
   shared_preferences: ^2.2.2
-  universal_platform: ^1.0.0+1
+  universal_platform: ^1.1.0
   http: ^1.2.0
   package_info_plus: ^8.0.0
   pointer_interceptor: ^0.10.1
