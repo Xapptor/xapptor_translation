@@ -14,11 +14,11 @@ dependencies:
   firebase_auth: ^4.19.4
   cloud_firestore: ^4.17.2
 
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.2.3
   universal_platform: ^1.1.0
   http: ^1.2.0
   package_info_plus: ^8.0.0
-  pointer_interceptor: ^0.10.1
+  pointer_interceptor: ^0.10.1+1
 
   # xapptor_api_key:
   #   path: ../xapptor_api_key
