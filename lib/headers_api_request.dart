@@ -8,7 +8,7 @@ Future<Map<String, String>> headers_api_request() async {
     "Content-type": "application/json",
   };
 
-  if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) {
+  if (UniversalPlatform.isMobile) {
     PackageInfo package_info = await PackageInfo.fromPlatform();
     String package_name = package_info.packageName;
     String build_signature = package_info.buildSignature;
