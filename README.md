@@ -69,7 +69,7 @@ class _ExampleWidgetState extends State<ExampleWidget> {
                 context: context,
                 background_color: Colors.blue,
                 has_back_button: true,
-                actions: <Widget>[
+                actions: [
                     Container(
                     margin: EdgeInsets.only(right: 20),
                     width: 150,
