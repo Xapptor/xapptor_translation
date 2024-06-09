@@ -1,4 +1,4 @@
-import 'package:xapptor_logic/change_color_by_priority.dart';
+import 'package:xapptor_logic/color/change_color_by_priority.dart';
 import 'package:xapptor_translation/model/enum.dart';
 import 'package:flutter/foundation.dart';
 
