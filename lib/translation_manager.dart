@@ -5,6 +5,7 @@ import 'package:xapptor_translation/get_translated_text_from_api.dart';
 import 'package:xapptor_translation/print_translation_info.dart';
 import 'package:xapptor_translation/model/enum.dart';
 import 'package:xapptor_translation/set_local_translated_text.dart';
+import 'package:xapptor_db/xapptor_db.dart';
 
 class TranslationManager {
   Future<String> translate({
@@ -15,8 +16,7 @@ class TranslationManager {
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String target_language =
-        prefs.getString("target_language") ?? source_language;
+    String target_language = prefs.getString("target_language") ?? source_language;
 
     String current_text = original_text;
 
@@ -37,8 +37,7 @@ class TranslationManager {
             prefs: prefs,
           ) !=
           null) {
-        current_text = prefs.getString(
-            "translated_text_${original_text}_target_$target_language")!;
+        current_text = prefs.getString("translated_text_${original_text}_target_$target_language")!;
 
         print_translation_info(
           original_text: original_text,
@@ -48,10 +47,8 @@ class TranslationManager {
           length: length,
         );
       } else {
-        QuerySnapshot translated_text_query = await FirebaseFirestore.instance
-            .collection("translations")
-            .where("original_text", isEqualTo: original_text)
-            .get();
+        QuerySnapshot translated_text_query =
+            await XapptorDB.instance.collection("translations").where("original_text", isEqualTo: original_text).get();
 
         if (translated_text_query.docs.isNotEmpty) {
           QueryDocumentSnapshot first_doc = translated_text_query.docs.first;
