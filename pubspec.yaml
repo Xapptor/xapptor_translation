@@ -26,8 +26,13 @@ dependencies:
 
   xapptor_api_key:
     path: ../xapptor_api_key
+  xapptor_db:
+    path: ../xapptor_db
   xapptor_logic:
     path: ../xapptor_logic  
+
+dependency_overrides:
+  web: ^1.0.0
 
 dev_dependencies:
   flutter_test:
