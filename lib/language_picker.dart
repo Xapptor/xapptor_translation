@@ -19,6 +19,7 @@ class LanguagePicker extends StatefulWidget {
     super.key,
     required this.translation_stream_list,
     required this.language_picker_items_text_color,
+    this.selected_text_color,
     this.max_languages_translated_per_day = 5,
     this.source_language_index = 0,
     required this.update_source_language,
@@ -27,6 +28,7 @@ class LanguagePicker extends StatefulWidget {
 
   final List<TranslationStream> translation_stream_list;
   final Color language_picker_items_text_color;
+  final Color? selected_text_color;
   int max_languages_translated_per_day;
   int source_language_index;
   final Function({required int new_source_language_index}) update_source_language;
@@ -169,16 +171,18 @@ class _LanguagePickerState extends State<LanguagePicker> {
 
   @override
   Widget build(BuildContext context) {
+    final selected_color = widget.selected_text_color ?? Colors.white;
+
     return PointerInterceptor(
       child: DropdownButton<String>(
         isExpanded: true,
         value: language_value,
-        iconEnabledColor: Colors.white,
+        iconEnabledColor: selected_color,
         iconSize: 24,
         elevation: 0,
         underline: Container(
           height: 2,
-          color: Colors.white,
+          color: selected_color,
         ),
         onChanged: (new_language) {
           check_translation_availability(new_language!);
@@ -189,8 +193,8 @@ class _LanguagePickerState extends State<LanguagePicker> {
               value: value,
               child: Text(
                 value,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: selected_color,
                   fontSize: 16,
                 ),
               ),
