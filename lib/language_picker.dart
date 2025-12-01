@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xapptor_api_key/gak.dart';
@@ -24,6 +25,9 @@ class LanguagePicker extends StatefulWidget {
     this.source_language_index = 0,
     required this.update_source_language,
     this.enable_initial_translation = true,
+    this.show_icon = false,
+    this.icon_color,
+    this.icon,
   });
 
   final List<TranslationStream> translation_stream_list;
@@ -33,6 +37,15 @@ class LanguagePicker extends StatefulWidget {
   int source_language_index;
   final Function({required int new_source_language_index}) update_source_language;
   final bool enable_initial_translation;
+
+  /// Whether to show a language icon at the beginning of the picker.
+  final bool show_icon;
+
+  /// Color for the language icon. Defaults to selected_text_color if not specified.
+  final Color? icon_color;
+
+  /// Custom icon to display. Defaults to FontAwesome language icon.
+  final IconData? icon;
 
   @override
   State<LanguagePicker> createState() => _LanguagePickerState();
@@ -172,48 +185,68 @@ class _LanguagePickerState extends State<LanguagePicker> {
   @override
   Widget build(BuildContext context) {
     final selected_color = widget.selected_text_color ?? Colors.white;
+    final icon_color = widget.icon_color ?? selected_color;
+    final icon_data = widget.icon ?? FontAwesomeIcons.language;
 
-    return PointerInterceptor(
-      child: DropdownButton<String>(
-        isExpanded: true,
-        value: language_value,
-        iconEnabledColor: selected_color,
-        iconSize: 24,
-        elevation: 0,
-        underline: Container(
-          height: 2,
-          color: selected_color,
-        ),
-        onChanged: (new_language) {
-          check_translation_availability(new_language!);
-        },
-        selectedItemBuilder: (BuildContext context) {
-          return languages_names.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(
-                  color: selected_color,
-                  fontSize: 16,
-                ),
-              ),
-            );
-          }).toList();
-        },
-        items: languages_names.map<DropdownMenuItem<String>>((String value) {
+    final dropdown = DropdownButton<String>(
+      isExpanded: true,
+      value: language_value,
+      iconEnabledColor: selected_color,
+      iconSize: 24,
+      elevation: 0,
+      underline: Container(
+        height: 2,
+        color: selected_color,
+      ),
+      onChanged: (new_language) {
+        check_translation_availability(new_language!);
+      },
+      selectedItemBuilder: (BuildContext context) {
+        return languages_names.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
             child: Text(
               value,
               style: TextStyle(
-                color: widget.language_picker_items_text_color,
+                color: selected_color,
                 fontSize: 16,
               ),
             ),
           );
-        }).toList(),
-      ),
+        }).toList();
+      },
+      items: languages_names.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(
+            value,
+            style: TextStyle(
+              color: widget.language_picker_items_text_color,
+              fontSize: 16,
+            ),
+          ),
+        );
+      }).toList(),
     );
+
+    if (widget.show_icon) {
+      return PointerInterceptor(
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Icon(
+                icon_data,
+                color: icon_color,
+                size: 18,
+              ),
+            ),
+            Expanded(child: dropdown),
+          ],
+        ),
+      );
+    }
+
+    return PointerInterceptor(child: dropdown);
   }
 }
