@@ -3,7 +3,6 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xapptor_api_key/gak.dart';
@@ -186,7 +185,7 @@ class _LanguagePickerState extends State<LanguagePicker> {
   Widget build(BuildContext context) {
     final selected_color = widget.selected_text_color ?? Colors.white;
     final icon_color = widget.icon_color ?? selected_color;
-    final icon_data = widget.icon ?? FontAwesomeIcons.language;
+    final icon_data = widget.icon ?? Icons.language;
 
     final dropdown = DropdownButton<String>(
       isExpanded: true,
