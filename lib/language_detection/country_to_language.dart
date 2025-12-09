@@ -1,7 +1,7 @@
-/// Maps ISO 3166-1 alpha-2 country codes to their primary language codes (ISO 639-1).
-///
-/// This mapping prioritizes the most commonly spoken language in each country.
-/// For countries with multiple official languages, the most widely used is selected.
+// Maps ISO 3166-1 alpha-2 country codes to their primary language codes (ISO 639-1).
+//
+// This mapping prioritizes the most commonly spoken language in each country.
+// For countries with multiple official languages, the most widely used is selected.
 
 const Map<String, String> country_to_language_map = {
   // Americas
